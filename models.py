@@ -11,7 +11,8 @@ class Comment(Model):
     description = fields.TextField()
     images = fields.JSONField()
     user = fields.JSONField()
+    sended = fields.BooleanField()
 
 
 class UpdateChannel(Model):
-    id = fields.BigintField(pk=True)
+    id = fields.BigIntField(pk=True)
