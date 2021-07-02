@@ -107,8 +107,14 @@ async def fetch(token):
         await get_comments_with_images_of_commit(token, commit) for commit in commits
     ]
 
+    return_comments = []
+
     for commit, comments in commits_with_comments:
         for comment in comments:
-            return transform_comment_data_shape(
-                comment, commit["message"], commit["build_number"]
+            return_comments.append(
+                transform_comment_data_shape(
+                    comment, commit["message"], commit["build_number"]
+                )
             )
+
+    return return_comments
