@@ -203,15 +203,15 @@ class Datamine(commands.Cog):
     @commands.command("검색")
     async def search(self, ctx, *, query=None):
         if not query:
-            return await ctx.send("검색어를 입력해주세요.")
-
-        results = (
-            await Comment.filter(
-                Q(description__icontains=query) | Q(title__icontains=query)
+            results = await Comment.all().order_by("timestamp")
+        else:
+            results = (
+                await Comment.filter(
+                    Q(description__icontains=query) | Q(title__icontains=query)
+                )
+                .order_by("timestamp")
+                .all()
             )
-            .order_by("timestamp")
-            .all()
-        )
 
         if len(results) == 0:
             await ctx.send("검색결과가 없습니다.")
