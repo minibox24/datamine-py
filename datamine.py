@@ -1,8 +1,9 @@
-from fetch import fetch
 import discord
 from discord.ext import commands, tasks
 from tortoise import Tortoise
+
 from config import GITHUB_TOKEN
+from fetch import fetch
 from models import *
 
 
