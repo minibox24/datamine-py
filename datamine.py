@@ -171,6 +171,7 @@ class Datamine(commands.Cog):
         await self.bot.close()
 
     @commands.group("구독")
+    @commands.has_permissions(manage_webhooks=True)
     async def sub(self, ctx):
         if ctx.invoked_subcommand:
             return
@@ -182,6 +183,7 @@ class Datamine(commands.Cog):
             await ctx.send("이 채널은 이미 데이터마이닝 알림 구독중입니다.")
 
     @sub.command("취소")
+    @commands.has_permissions(manage_webhooks=True)
     async def unsub(self, ctx):
         if await UpdateChannel.exists(id=ctx.channel.id):
             await UpdateChannel.filter(id=ctx.channel.id).delete()
