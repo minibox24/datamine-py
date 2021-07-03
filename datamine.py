@@ -28,6 +28,7 @@ class Paginator:
                             "style": 4,
                             "label": "이전",
                             "custom_id": "previous",
+                            "disabled": True,
                         },
                         {
                             "type": 2,
@@ -59,6 +60,35 @@ class Paginator:
                     timeout=120,
                 )
 
+                custom_id = msg["d"]["data"]["custom_id"]
+
+                if custom_id == "next":
+                    self.page += 1
+                else:
+                    self.page -= 1
+
+                try:
+                    data["embeds"] = [self.embeds[self.page - 1].to_dict()]
+                except IndexError:
+                    continue
+
+                data["components"][0]["components"][1][
+                    "label"
+                ] = f"{self.page} / {len(self.embeds)}"
+
+                data["components"][0]["components"][0]["disabled"] = self.page <= 1
+                data["components"][0]["components"][2]["disabled"] = self.page >= len(
+                    self.embeds
+                )
+
+                await self.bot.http.request(
+                    discord.http.Route(
+                        "PATCH",
+                        f"/channels/{self.ctx.channel.id}/messages/{message_id}",
+                    ),
+                    json=data,
+                )
+
                 await self.bot.http.request(
                     discord.http.Route(
                         "POST",
@@ -67,31 +97,6 @@ class Paginator:
                         token=msg["d"]["token"],
                     ),
                     json={"type": 7},
-                )
-
-                custom_id = msg["d"]["data"]["custom_id"]
-
-                if custom_id == "next":
-                    self.page += 1
-                else:
-                    self.page -= 1
-
-                data["embeds"] = [self.embeds[self.page - 1].to_dict()]
-                data["components"][0]["components"][1][
-                    "label"
-                ] = f"{self.page} / {len(self.embeds)}"
-
-                if self.page >= len(self.embeds):
-                    data["components"][0]["components"][2]["disabled"] = True
-                else:
-                    data["components"][0]["components"][0]["disabled"] = False
-
-                await self.bot.http.request(
-                    discord.http.Route(
-                        "PATCH",
-                        f"/channels/{self.ctx.channel.id}/messages/{message_id}",
-                    ),
-                    json=data,
                 )
         except asyncio.TimeoutError:
             data["components"] = []
