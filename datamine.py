@@ -45,16 +45,14 @@ class Datamine(commands.Cog):
             url=comment.user["url"],
         )
 
-        image_queue = []
         if len(comment.images) > 0:
             embed.set_image(url=comment.images[0])
-            image_queue = comment.images[1:]
 
         for ch in await UpdateChannel.all():
             channel = self.bot.get_channel(ch.id)
 
             await channel.send(embed=embed)
-            for image in image_queue:
+            for image in comment.images[1:]:
                 await channel.send(image)
 
     @commands.command("종료")
@@ -82,6 +80,32 @@ class Datamine(commands.Cog):
             await ctx.send("이 채널의 데이터마이닝 알림 구독을 취소했습니다.")
         else:
             await ctx.send("이 채널은 데이터마이닝 알림 구독중이 아닙니다.")
+
+    @commands.command("최신")
+    async def latest(self, ctx):
+        latest = sorted(await Comment.all(), key=lambda x: x.timestamp, reverse=True)[0]
+        embed = discord.Embed()
+        embed.color = discord.Color.blurple()
+        embed.title = latest.title
+        embed.description = (
+            latest.description[:4000] + "..."
+            if len(latest.description) > 4000
+            else latest.description
+        )
+        embed.url = latest.url
+        embed.timestamp = latest.timestamp
+        embed.set_author(
+            name=latest.user["username"],
+            icon_url=latest.user["avatar_url"],
+            url=latest.user["url"],
+        )
+
+        if len(latest.images) > 0:
+            embed.set_image(url=latest.images[0])
+
+        await ctx.send(embed=embed)
+        for image in latest.images[1:]:
+            await ctx.send(image)
 
 
 def setup(bot):
