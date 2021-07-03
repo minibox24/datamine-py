@@ -146,6 +146,8 @@ class Datamine(commands.Cog):
             url=comment.user["url"],
         )
 
+        embed.set_footer(text="bot source: minibox24/datamine-py")
+
         if len(comment.images) > 0:
             embed.set_image(url=comment.images[0])
 
