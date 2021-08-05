@@ -4,7 +4,7 @@ import aiohttp
 from dateutil import parser
 
 regexs = {
-    "build_number": re.compile(r"(Canary\sbuild:\s([0-9]*))"),
+    "build_number": re.compile(r"Build\s([0-9]*)"),
     "markdown": re.compile(r'!\[.*\]\((.*?)\s*("(?:.*[^"])")?\s*\)'),
     "html": re.compile(r'<img\s+[^>]*src="([^"]*)"[^>]*>'),
 }
